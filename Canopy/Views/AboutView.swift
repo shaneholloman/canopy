@@ -17,17 +17,6 @@ struct AboutView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: .infinity)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay(alignment: .bottom) {
-                        if let logo = Self.loadResource(name: "CanopyLogo", ext: "png") {
-                            Image(nsImage: logo)
-                                .resizable()
-                                .interpolation(.high)
-                                .aspectRatio(contentMode: .fit)
-                                .frame(maxWidth: 180)
-                                .padding(.bottom, 12)
-                                .shadow(color: .black.opacity(0.4), radius: 6, y: 2)
-                        }
-                    }
             } else {
                 Text("Canopy")
                     .font(.title)

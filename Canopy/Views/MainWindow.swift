@@ -81,9 +81,15 @@ struct MainWindow: View {
                             if let logoImage = Self.loadLogo() {
                                 Image(nsImage: logoImage)
                                     .resizable()
+                                    .renderingMode(.template)
                                     .interpolation(.high)
                                     .aspectRatio(contentMode: .fit)
                                     .frame(maxWidth: 300)
+                                    .foregroundStyle(Color(red: 0.92, green: 0.84, blue: 0.65))
+                                    .shadow(color: .black, radius: 0, x: 1, y: 0)
+                                    .shadow(color: .black, radius: 0, x: -1, y: 0)
+                                    .shadow(color: .black, radius: 0, x: 0, y: 1)
+                                    .shadow(color: .black, radius: 0, x: 0, y: -1)
                                     .opacity(textOpacity)
                                     .offset(y: -192)
                             }
