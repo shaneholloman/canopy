@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		07478539E82EBBAE81225E0D /* ProjectColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DF06DA3F5EC110B202E67A /* ProjectColor.swift */; };
 		091307491980509F1BCDCBB3 /* ShortcutsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4196F92A864139C78719C45 /* ShortcutsView.swift */; };
+		0CF73FE281E458EC93F52840 /* NotificationServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B94D69DB49FB6F3E798C7A07 /* NotificationServiceTests.swift */; };
+		1AF23EB0DAF39537E8BC500F /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E41572F63722BAF89C330B /* NotificationService.swift */; };
 		1C354EB4E51F588DBD773A0C /* TerminalSessionEdgeCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97AF671863E017A955F7A75 /* TerminalSessionEdgeCaseTests.swift */; };
 		2149040E4A682B4FA842BFA0 /* TerminalSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27744AE57F084B3F805FCE26 /* TerminalSession.swift */; };
 		216CA915FF3647FAB9BD25BB /* CommandPaletteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACB2C823DFBD1F46E0EA7D84 /* CommandPaletteView.swift */; };
@@ -86,6 +88,7 @@
 		2D0D9FD9FF67751D32B9529D /* MergeWorktreeSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MergeWorktreeSheet.swift; sourceTree = "<group>"; };
 		3577FDAC3BB3B716543493D2 /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChecker.swift; sourceTree = "<group>"; };
 		380F49104F9CB7D2D472F216 /* GitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitService.swift; sourceTree = "<group>"; };
+		39E41572F63722BAF89C330B /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		3BC4F2B628227B82EA88FC92 /* CommandPaletteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandPaletteTests.swift; sourceTree = "<group>"; };
 		3C1D664559A35613DEC8E65E /* GitServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitServiceTests.swift; sourceTree = "<group>"; };
 		43E2818C52F1491CECED6EA6 /* HelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpView.swift; sourceTree = "<group>"; };
@@ -114,6 +117,7 @@
 		ACB2C823DFBD1F46E0EA7D84 /* CommandPaletteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandPaletteView.swift; sourceTree = "<group>"; };
 		B144B4427757B08905287719 /* CanopyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CanopyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4196F92A864139C78719C45 /* ShortcutsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutsView.swift; sourceTree = "<group>"; };
+		B94D69DB49FB6F3E798C7A07 /* NotificationServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationServiceTests.swift; sourceTree = "<group>"; };
 		B97AF671863E017A955F7A75 /* TerminalSessionEdgeCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalSessionEdgeCaseTests.swift; sourceTree = "<group>"; };
 		B9AA8EED2BAA87F332CE3C54 /* Canopy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Canopy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC1CBBF86B23C79D577B9030 /* ClaudeSessionFinderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeSessionFinderTests.swift; sourceTree = "<group>"; };
@@ -180,6 +184,7 @@
 			children = (
 				8F75DF1CB976D5AFF46B9E9E /* ActivityDataService.swift */,
 				380F49104F9CB7D2D472F216 /* GitService.swift */,
+				39E41572F63722BAF89C330B /* NotificationService.swift */,
 				9D974FBD7BD5BBBDF64BE541 /* SessionCostService.swift */,
 				27744AE57F084B3F805FCE26 /* TerminalSession.swift */,
 				3577FDAC3BB3B716543493D2 /* UpdateChecker.swift */,
@@ -254,6 +259,7 @@
 				3C1D664559A35613DEC8E65E /* GitServiceTests.swift */,
 				E928FA92524418DF6045AD6C /* MergeWorktreeTests.swift */,
 				96866F8C0F3D4596B7B10674 /* ModelTypeTests.swift */,
+				B94D69DB49FB6F3E798C7A07 /* NotificationServiceTests.swift */,
 				BF1E52AC47F359BF1AE8577B /* ProjectColorTests.swift */,
 				46D422E570979B7E618CD81A /* ProjectResolutionTests.swift */,
 				DB01F64B012648D641FF741D /* ProjectTests.swift */,
@@ -385,6 +391,7 @@
 				B44CE17C1CF9BA41D411CE90 /* HelpView.swift in Sources */,
 				FAB222A456A757DE4298D4A7 /* MainWindow.swift in Sources */,
 				23235F40B9E99F556A3558E5 /* MergeWorktreeSheet.swift in Sources */,
+				1AF23EB0DAF39537E8BC500F /* NotificationService.swift in Sources */,
 				9835CF75D59788B9C7C24258 /* Project.swift in Sources */,
 				07478539E82EBBAE81225E0D /* ProjectColor.swift in Sources */,
 				4627A8F361E31D9EA414F797 /* ProjectDetailView.swift in Sources */,
@@ -419,6 +426,7 @@
 				36E43509BB7C45DF3228C5BB /* GitServiceTests.swift in Sources */,
 				2C645C1A5FA86061FE955BDB /* MergeWorktreeTests.swift in Sources */,
 				EE189F53348D8A0F48F1BE51 /* ModelTypeTests.swift in Sources */,
+				0CF73FE281E458EC93F52840 /* NotificationServiceTests.swift in Sources */,
 				C20B1FD7CDB479CD9E788FA3 /* ProjectColorTests.swift in Sources */,
 				F947F0BD6885AEF08CEF331A /* ProjectResolutionTests.swift in Sources */,
 				2C1B79B946E6AD50EB0EC424 /* ProjectTests.swift in Sources */,
