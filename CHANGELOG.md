@@ -7,6 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-04-13
+
+### Added
+- Native macOS notifications via `UNUserNotificationCenter`. Session-finished
+  banners now show Canopy's app icon and name (instead of Script Editor's),
+  and clicking a banner activates Canopy and selects the finished session's
+  tab. (#3)
+- Background update check on launch. A rate-limited (once per 24h) GitHub
+  Releases poll surfaces update availability in the About sheet and Settings,
+  with a manual "Check Now" button and a native notification when a newer
+  release is found. Semver comparison is numeric (so `0.10.0 > 0.9.0`). (#4)
+- `Help → Check for Updates...` menu entry that triggers an immediate check
+  and opens the About sheet so the status row is visible.
+- Splash hero in the About sheet — a downscaled JPEG of the README splash
+  image, with the About sheet resized to 540×520 to match the 2.4:1 aspect.
+- Launch splash: the Canopy logo is now rendered in warm sand beige with a
+  1px black outline, and the duplicate wordmark overlay on the About hero
+  has been removed.
+
+### Fixed
+- `Resources/` directory (`CanopyLogo.png`, `Canopy.icns`, `Splash.jpg`) was
+  being silently excluded from every Xcode build because `project.yml` used
+  an invalid XcodeGen `resources:` target key. The app previously only
+  worked because `AboutView` had a relative-path fallback. Resources are now
+  bundled via a proper `sources:` entry with `buildPhase: resources`.
+- `NotificationService.swift` was present on disk but not registered in
+  `Canopy.xcodeproj/project.pbxproj`, which would have broken the next
+  tagged release (`xcodebuild archive` does not do SPM-style target
+  globbing). Regenerated via xcodegen.
+- DMG no longer ships the `xcodebuild -exportArchive` sidecar files
+  (`DistributionSummary.plist`, `ExportOptions.plist`, `Packaging.log`).
+  `create-dmg` is now pointed at `Canopy.app` directly instead of the
+  `build/export/` directory.
+- Update-available notification path no longer references the removed
+  AppleScript helper (leftover from the update-checker merge) that was
+  breaking the CI build.
+- README "Build" badge now points at `ci.yml` instead of `release.yml`, so
+  it reflects master status rather than only tag pushes.
+
+### Internal
+- Homebrew tap workflow gained a `workflow_dispatch` trigger with a `tag`
+  input, so the cask update can be re-dispatched on demand. The default
+  `GITHUB_TOKEN` suppresses the cascading `release: published` event, so a
+  manual escape hatch is required.
+
 ## [0.9.0] - 2026-04-13
 
 First public release. 0.1.0 was an internal build; 0.9.0 is the same

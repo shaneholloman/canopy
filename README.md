@@ -192,6 +192,7 @@ Click any project in the sidebar to see every worktree, its branch, its status, 
 | `Cmd+K` | Command palette |
 | `Cmd+F` | Find in terminal |
 | `Cmd+Shift+D` | Toggle split terminal |
+| `Cmd+Shift+A` | Activity dashboard |
 | `Cmd+Shift+S` | Cycle tab sort mode |
 | `Cmd+1`–`Cmd+9` | Jump to tab N |
 | `Cmd+,` | Settings |
@@ -252,9 +253,8 @@ All configuration lives in `~/.config/canopy/`:
 
 ## Roadmap
 
-Canopy is at `0.1.0`. It's stable enough that I use it every day, but there are features I still want to build:
+Canopy is at `0.9.1`. It's stable enough that I use it every day, but there are features I still want to build:
 
-- **Sparkle in-app updates** — check for updates from within the app, not just Homebrew
 - **Command palette expansion** — fuzzy search over terminal output history, not just sessions
 - **Token/cost alerts** — get a notification when a session crosses a budget you set
 - **iCloud project sync** — same project list across machines

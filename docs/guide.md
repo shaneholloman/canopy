@@ -202,6 +202,7 @@ All configuration lives in `~/.config/canopy/`:
 | `settings.json` | Global preferences |
 | `projects.json` | Project list and per-project config |
 | `projects.backup.json` | Automatic backup (created on every launch) |
+| `sessions.json` | Persisted sessions, restored on app restart |
 
 ## Tips
 
