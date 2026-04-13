@@ -101,6 +101,11 @@ struct CanopyApp: App {
 
                 Divider()
 
+                Button("Check for Updates...") {
+                    showAbout = true
+                    Task { await appState.checkForUpdatesNow() }
+                }
+
                 Button("User Guide") {
                     if let url = URL(string: "https://github.com/juliensimon/canopy/blob/master/docs/guide.md") {
                         NSWorkspace.shared.open(url)

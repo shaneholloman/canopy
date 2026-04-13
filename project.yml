@@ -17,8 +17,8 @@ targets:
     platform: macOS
     sources:
       - Canopy
-    resources:
-      - Resources
+      - path: Resources
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.canopy.app

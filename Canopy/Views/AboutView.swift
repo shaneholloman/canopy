@@ -10,12 +10,24 @@ struct AboutView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            if let logo = Self.loadLogo() {
-                Image(nsImage: logo)
+            if let splash = Self.loadResource(name: "Splash", ext: "jpg") {
+                Image(nsImage: splash)
                     .resizable()
                     .interpolation(.high)
                     .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: 200)
+                    .frame(maxWidth: .infinity)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .overlay(alignment: .bottom) {
+                        if let logo = Self.loadResource(name: "CanopyLogo", ext: "png") {
+                            Image(nsImage: logo)
+                                .resizable()
+                                .interpolation(.high)
+                                .aspectRatio(contentMode: .fit)
+                                .frame(maxWidth: 180)
+                                .padding(.bottom, 12)
+                                .shadow(color: .black.opacity(0.4), radius: 6, y: 2)
+                        }
+                    }
             } else {
                 Text("Canopy")
                     .font(.title)
@@ -69,16 +81,16 @@ struct AboutView: View {
                 .keyboardShortcut(.defaultAction)
         }
         .padding(24)
-        .frame(width: 380, height: 400)
+        .frame(width: 540, height: 520)
     }
 
-    private static func loadLogo() -> NSImage? {
-        if let path = Bundle.main.path(forResource: "CanopyLogo", ofType: "png") {
+    private static func loadResource(name: String, ext: String) -> NSImage? {
+        if let path = Bundle.main.path(forResource: name, ofType: ext) {
             return NSImage(contentsOfFile: path)
         }
         if let exec = Bundle.main.executablePath {
             let path = ((exec as NSString).deletingLastPathComponent as NSString)
-                .appendingPathComponent("../Resources/CanopyLogo.png")
+                .appendingPathComponent("../Resources/\(name).\(ext)")
             return NSImage(contentsOfFile: path)
         }
         return nil
