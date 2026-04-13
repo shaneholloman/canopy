@@ -26,6 +26,19 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         center.add(request, withCompletionHandler: nil)
     }
 
+    func postUpdateAvailable(version: String) {
+        let content = UNMutableNotificationContent()
+        content.title = "Canopy update available"
+        content.body = "Version \(version) is now available."
+        content.sound = .default
+        let request = UNNotificationRequest(
+            identifier: "canopy.update.\(version)",
+            content: content,
+            trigger: nil
+        )
+        center.add(request, withCompletionHandler: nil)
+    }
+
     nonisolated static func makeContent(title: String, subtitle: String, sessionId: UUID) -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
         content.title = title

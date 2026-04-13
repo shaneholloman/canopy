@@ -10,7 +10,7 @@
 
 [![Latest release](https://img.shields.io/github/v/release/juliensimon/canopy?display_name=tag&sort=semver&color=4c9a6a)](https://github.com/juliensimon/canopy/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/juliensimon/canopy/total?color=4c9a6a&logo=github)](https://github.com/juliensimon/canopy/releases)
-[![Build](https://img.shields.io/github/actions/workflow/status/juliensimon/canopy/release.yml?branch=master&logo=github)](https://github.com/juliensimon/canopy/actions/workflows/release.yml)
+[![Build](https://img.shields.io/github/actions/workflow/status/juliensimon/canopy/ci.yml?branch=master&logo=github)](https://github.com/juliensimon/canopy/actions/workflows/ci.yml)
 [![Stars](https://img.shields.io/github/stars/juliensimon/canopy?color=4c9a6a&logo=github)](https://github.com/juliensimon/canopy/stargazers)
 [![Issues](https://img.shields.io/github/issues/juliensimon/canopy?color=4c9a6a)](https://github.com/juliensimon/canopy/issues)
 [![Last commit](https://img.shields.io/github/last-commit/juliensimon/canopy?color=4c9a6a)](https://github.com/juliensimon/canopy/commits/master)

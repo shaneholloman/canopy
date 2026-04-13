@@ -219,7 +219,7 @@ final class AppState: ObservableObject {
                 let displayVersion = release.tagName.hasPrefix("v") ? String(release.tagName.dropFirst()) : release.tagName
                 updateStatus = .available(version: displayVersion, url: release.htmlUrl)
                 if !NSApp.isActive {
-                    postNotification(title: "Canopy update available", body: "Version \(displayVersion) is now available.")
+                    NotificationService.shared.postUpdateAvailable(version: displayVersion)
                 }
             case .orderedSame, .orderedDescending:
                 updateStatus = .upToDate
