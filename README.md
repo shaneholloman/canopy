@@ -209,22 +209,6 @@ Canopy builds on two ideas that play well together:
 
 Everything else — the tabs, the project view, the Activity dashboard, the palette, the split pane — is a native SwiftUI app wrapped around [SwiftTerm](https://github.com/migueldeicaza/SwiftTerm) for terminal emulation. No Electron, no webviews, no bundled Node. It launches fast, idles quiet, and behaves like a Mac app.
 
-```
-┌───────────┬────────────────────────────┐
-│  Sidebar  │  Tab Bar                   │
-│           │  [branch-a] [branch-b] [+] │
-│  Projects ├────────────────────────────┤
-│  Sessions │                            │
-│           │    Terminal (SwiftTerm)    │
-│           │    Running Claude Code     │
-│           │                            │
-│           ├────────────────────────────┤
-│           │  Shell split (Cmd+Shift+D) │
-├───────────┴────────────────────────────┤
-│  Status bar · activity dots · tokens   │
-└────────────────────────────────────────┘
-```
-
 For a deeper walkthrough, read the **[User Guide](docs/guide.md)**.
 
 ---
@@ -248,20 +232,6 @@ All configuration lives in `~/.config/canopy/`:
 - `projects.json` — project list and per-project config
 - `projects.backup.json` — automatic backup created on every launch
 - `sessions.json` — persisted sessions, restored on app restart
-
----
-
-## Roadmap
-
-Canopy is at `0.9.1`. It's stable enough that I use it every day, but there are features I still want to build:
-
-- **Command palette expansion** — fuzzy search over terminal output history, not just sessions
-- **Token/cost alerts** — get a notification when a session crosses a budget you set
-- **iCloud project sync** — same project list across machines
-- **Voice input** (WhisperKit) — local, on-device dictation into Claude
-- **Session transcript export** — clean Markdown export for sharing
-
-See **[TODO.md](TODO.md)** for the full list.
 
 ---
 
