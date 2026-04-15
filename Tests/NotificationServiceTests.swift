@@ -45,4 +45,56 @@ struct NotificationServiceTests {
         // without updating the observer would silently break click-to-focus.
         #expect(Notification.Name.canopySelectSession.rawValue == "canopySelectSession")
     }
+
+    // MARK: - routeResponseUserInfo
+
+    @Test func routeResponsePostsSelectSessionForValidId() async {
+        let id = UUID()
+        let received = await withCheckedContinuation { (cont: CheckedContinuation<UUID?, Never>) in
+            let observer = NotificationCenter.default.addObserver(
+                forName: .canopySelectSession,
+                object: nil,
+                queue: .main
+            ) { note in
+                cont.resume(returning: note.userInfo?["sessionId"] as? UUID)
+            }
+            NotificationService.routeResponseUserInfo(["sessionId": id.uuidString])
+            // Observer removal happens after resume; schedule via main after a tick.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                NotificationCenter.default.removeObserver(observer)
+            }
+        }
+        #expect(received == id)
+    }
+
+    @Test func routeResponseIgnoresMissingSessionId() {
+        var fired = false
+        let observer = NotificationCenter.default.addObserver(
+            forName: .canopySelectSession,
+            object: nil,
+            queue: .main
+        ) { _ in fired = true }
+        defer { NotificationCenter.default.removeObserver(observer) }
+
+        NotificationService.routeResponseUserInfo([:])
+        NotificationService.routeResponseUserInfo(["other": "value"])
+        #expect(fired == false)
+    }
+
+    @Test func routeResponseIgnoresMalformedSessionId() {
+        var fired = false
+        let observer = NotificationCenter.default.addObserver(
+            forName: .canopySelectSession,
+            object: nil,
+            queue: .main
+        ) { _ in fired = true }
+        defer { NotificationCenter.default.removeObserver(observer) }
+
+        NotificationService.routeResponseUserInfo(["sessionId": "not-a-uuid"])
+        #expect(fired == false)
+    }
+
+    // Note: we can't instantiate NotificationService.shared under `swift test` —
+    // UNUserNotificationCenter.current() requires a bundled app and crashes
+    // otherwise. The post methods are therefore only exercised via the real app.
 }

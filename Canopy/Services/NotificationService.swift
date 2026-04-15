@@ -63,16 +63,24 @@ final class NotificationService: NSObject, UNUserNotificationCenterDelegate {
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
-        let userInfo = response.notification.request.content.userInfo
-        if let idString = userInfo["sessionId"] as? String, let id = UUID(uuidString: idString) {
-            DispatchQueue.main.async {
-                NotificationCenter.default.post(
-                    name: .canopySelectSession,
-                    object: nil,
-                    userInfo: ["sessionId": id]
-                )
-            }
-        }
+        Self.routeResponseUserInfo(response.notification.request.content.userInfo)
         completionHandler()
+    }
+
+    /// Parses a notification's userInfo and, if it carries a valid sessionId,
+    /// posts a `.canopySelectSession` NotificationCenter event on the main queue.
+    /// Extracted so the routing logic is testable without constructing a real UNNotification.
+    nonisolated static func routeResponseUserInfo(_ userInfo: [AnyHashable: Any]) {
+        guard
+            let idString = userInfo["sessionId"] as? String,
+            let id = UUID(uuidString: idString)
+        else { return }
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(
+                name: .canopySelectSession,
+                object: nil,
+                userInfo: ["sessionId": id]
+            )
+        }
     }
 }

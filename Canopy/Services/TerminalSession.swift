@@ -138,19 +138,19 @@ final class TerminalSession: ObservableObject {
 
     // MARK: - Private
 
-    private func handleOutputData(_ data: Data) {
+    func handleOutputData(_ data: Data) {
         rawOutput.append(data)
         if rawOutput.count > maxRawOutputSize {
             rawOutput.removeFirst(rawOutput.count - maxRawOutputSize)
         }
 
-        guard containsVisibleContent(data) else { return }
+        guard Self.containsVisibleContent(data) else { return }
         activity = .working
         restartIdleTimer()
     }
 
     /// Returns true if data contains printable characters beyond terminal control sequences.
-    private func containsVisibleContent(_ data: Data) -> Bool {
+    nonisolated static func containsVisibleContent(_ data: Data) -> Bool {
         var i = data.startIndex
         while i < data.endIndex {
             let byte = data[i]
@@ -212,7 +212,7 @@ final class TerminalSession: ObservableObject {
         }
     }
 
-    private func buildEnvironment() -> [String] {
+    func buildEnvironment() -> [String] {
         var env = Terminal.getEnvironmentVariables(termName: "xterm-256color")
         let parentEnv = ProcessInfo.processInfo.environment
         for key in ["SSH_AUTH_SOCK", "SSH_AGENT_PID", "DISPLAY", "TMPDIR"] {
