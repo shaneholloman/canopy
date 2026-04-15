@@ -30,7 +30,7 @@ jobs:
           xcrun llvm-cov export \
             -format=lcov \
             -instr-profile "${PROF_DATA}" \
-            -ignore-filename-regex='.build|Tests' \
+            -ignore-filename-regex='.build|Tests|Views|CanopyApp' \
             "${XCTEST_BIN}" > coverage.lcov
 
       - name: Upload coverage to Codecov
