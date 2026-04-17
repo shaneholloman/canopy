@@ -118,6 +118,44 @@ struct GitStatusPollingTests {
         #expect(state.activeGitStatus?.diffStat?.isClean == false)
     }
 
+    /// Regression: `refreshGitStatus` must not overwrite `activeGitStatus`
+    /// with data from a session that was active when the refresh started but
+    /// was switched away from before the git operations completed. Without
+    /// the stale-session guard, the 10s poller racing with a tab switch
+    /// writes the *previous* session's git state onto the new selection.
+    @Test @MainActor func refreshGitStatusDoesNotOverwriteAfterSessionSwitch() async throws {
+        let repo = try makeTempRepo()
+        defer { try? fm.removeItem(atPath: repo) }
+        let tempDir = NSTemporaryDirectory() + "canopy-pollrace-\(UUID().uuidString)"
+        try fm.createDirectory(atPath: tempDir, withIntermediateDirectories: true)
+        defer { try? fm.removeItem(atPath: tempDir) }
+
+        let state = AppState()
+        state.createSession(name: "git-session", directory: repo)
+        state.createSession(name: "plain-session", directory: tempDir)
+
+        // Activate the git session and kick off a refresh. The async git
+        // operations suspend; before they resume, we switch to the non-git
+        // session. The guard must prevent the in-flight refresh from
+        // writing the git-session's status onto the plain-session.
+        state.activeSessionId = state.sessions[0].id
+        let refresh = Task { @MainActor in await state.refreshGitStatus() }
+        // MainActor is cooperative: both this test and the refresh task are
+        // MainActor-isolated, so tasks run FIFO to their next suspension.
+        // `await Task.yield()` lets the refresh task run its synchronous
+        // prefix (capture `activeSession`, read `sessionId`, `path`) up to
+        // its first real suspension at `await git.isGitRepo` (GitService is
+        // non-isolated, so that await hops off the main actor). By the time
+        // control returns here, the refresh has already captured the git
+        // session — now we can swap `activeSessionId` to exercise the race.
+        await Task.yield()
+        state.activeSessionId = state.sessions[1].id
+        await refresh.value
+
+        #expect(state.activeGitStatus == nil,
+                "Stale git status wrote over fresh non-git selection")
+    }
+
     @Test @MainActor func refreshGitStatusInWorktree() async throws {
         let repo = try makeTempRepo()
         defer { try? fm.removeItem(atPath: repo) }
@@ -165,6 +203,83 @@ struct GitStatusPollingTests {
         #expect(state.sessionDiffStats[cleanId]?.isClean == true)
         #expect(state.sessionDiffStats[dirtyId] != nil)
         #expect(state.sessionDiffStats[dirtyId]?.isClean == false)
+    }
+
+    @Test @MainActor func refreshAllSessionDiffStatsTracksCommitsAhead() async throws {
+        let repo = try makeTempRepo()
+        defer { try? fm.removeItem(atPath: repo) }
+
+        let git = GitService()
+        let wt = repo + "-ahead-wt"
+        defer { try? fm.removeItem(atPath: wt) }
+        try await git.createWorktree(
+            repoPath: repo, worktreePath: wt,
+            branch: "feat/ahead", createBranch: true
+        )
+        // Add a commit on the feature branch so it's ahead of main.
+        try "new".write(toFile: "\(wt)/new.txt", atomically: true, encoding: .utf8)
+        try shell("git add -A && git commit -m 'ahead'", in: wt)
+
+        let state = AppState()
+        state.createSession(name: "feat", directory: wt)
+
+        await state.refreshAllSessionDiffStats()
+
+        let id = state.sessions[0].id
+        #expect(state.sessionCommitsAhead[id] == 1)
+    }
+
+    // MARK: - refreshAllSessionPRCounts throttling
+
+    @Test @MainActor func refreshAllSessionPRCountsReturnsEmptyForNoSessions() async {
+        let state = AppState()
+        await state.refreshAllSessionPRCounts(force: true)
+        #expect(state.sessionPRCount.isEmpty)
+    }
+
+    @Test @MainActor func refreshAllSessionPRCountsThrottlesRapidCalls() async throws {
+        // With `force: false` and a fresh AppState, the first call passes the
+        // throttle (lastSessionPRRefresh starts at distantPast). A second
+        // immediate call must bail early without touching the state.
+        // We seed a fake entry and verify the second call doesn't clear it,
+        // which would happen if it re-ran the "rebuild from scratch" block.
+        let repo = try makeTempRepo()
+        defer { try? fm.removeItem(atPath: repo) }
+
+        let state = AppState()
+        state.createSession(name: "s", directory: repo)
+        let id = state.sessions[0].id
+
+        // First call updates lastSessionPRRefresh. Since there's no `gh` PR
+        // matching the branch, sessionPRCount is set to [:].
+        await state.refreshAllSessionPRCounts(force: false)
+
+        // Seed a value a non-forced second call would clobber if it ran.
+        state.sessionPRCount[id] = 42
+
+        await state.refreshAllSessionPRCounts(force: false)
+
+        #expect(state.sessionPRCount[id] == 42,
+                "Throttle should have prevented the rebuild")
+    }
+
+    @Test @MainActor func refreshAllSessionPRCountsForceOverridesThrottle() async throws {
+        let repo = try makeTempRepo()
+        defer { try? fm.removeItem(atPath: repo) }
+
+        let state = AppState()
+        state.createSession(name: "s", directory: repo)
+        let id = state.sessions[0].id
+
+        await state.refreshAllSessionPRCounts(force: false)
+        state.sessionPRCount[id] = 42
+
+        // force: true must bypass the throttle and rebuild, clearing the
+        // stale seed since no gh match exists in tests.
+        await state.refreshAllSessionPRCounts(force: true)
+
+        #expect(state.sessionPRCount[id] == nil,
+                "Force must bypass throttle and rebuild session PR counts")
     }
 
     @Test @MainActor func refreshAllSessionDiffStatsSkipsNonGit() async {

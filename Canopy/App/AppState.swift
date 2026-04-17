@@ -169,7 +169,10 @@ final class AppState: ObservableObject {
     }
 
     /// When selecting a session, clear the project selection (and vice versa).
+    /// No-op when `id` does not match a live session (stale notification
+    /// for a closed session, or observer on a different AppState instance).
     func selectSession(_ id: UUID) {
+        guard sessions.contains(where: { $0.id == id }) else { return }
         activeSessionId = id
         selectedProjectId = nil
         showActivity = false
@@ -222,8 +225,10 @@ final class AppState: ObservableObject {
             activeGitStatus = nil
             return
         }
+        let sessionId = session.id
         let path = session.workingDirectory
         guard await git.isGitRepo(path: path) else {
+            guard activeSessionId == sessionId else { return }
             activeGitStatus = nil
             return
         }
@@ -241,6 +246,9 @@ final class AppState: ObservableObject {
         } else {
             prs = cachedPRsByRepo[path] ?? []
         }
+
+        // Guard against stale results if the session changed during async work.
+        guard activeSessionId == sessionId else { return }
 
         activeGitStatus = GitStatusInfo(
             diffStat: diff, commitsAhead: ahead,
@@ -557,6 +565,9 @@ final class AppState: ObservableObject {
         terminalSessions[id]?.stop()
         terminalSessions.removeValue(forKey: id)
         closeSplitTerminal(for: id)
+        sessionDiffStats.removeValue(forKey: id)
+        sessionCommitsAhead.removeValue(forKey: id)
+        sessionPRCount.removeValue(forKey: id)
         withAnimation(.easeOut(duration: 0.25)) {
             sessions.removeAll { $0.id == id }
             if activeSessionId == id {
