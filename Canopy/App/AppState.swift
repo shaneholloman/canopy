@@ -62,6 +62,14 @@ final class AppState: ObservableObject {
     /// Result of the most recent update check.
     @Published var updateStatus: UpdateStatus = .unknown
 
+    /// Git status for the currently active session.
+    @Published var activeGitStatus: GitStatusInfo?
+
+    /// Cached PR data per repo path, to avoid hitting gh CLI every poll cycle.
+    private var cachedPRsByRepo: [String: [GitPRInfo]] = [:]
+    private var lastPRRefreshByRepo: [String: Date] = [:]
+    private var gitPollTask: Task<Void, Never>?
+
     private let lastUpdateCheckKey = "canopy.lastUpdateCheck"
     private let updateCheckInterval: TimeInterval = 24 * 60 * 60
 
@@ -195,6 +203,62 @@ final class AppState: ObservableObject {
             subtitle: session.name,
             sessionId: sessionId
         )
+    }
+
+    // MARK: - Git Status Polling
+
+    /// Fetches git status for the active session and updates `activeGitStatus`.
+    func refreshGitStatus() async {
+        guard let session = activeSession else {
+            activeGitStatus = nil
+            return
+        }
+        let sessionId = session.id
+        let path = session.workingDirectory
+        guard await git.isGitRepo(path: path) else {
+            activeGitStatus = nil
+            return
+        }
+
+        let diff = await git.diffStat(repoPath: path)
+        let ahead = await git.commitsAhead(repoPath: path)
+
+        // Cache PRs per repo path (60s TTL)
+        let prs: [GitPRInfo]
+        let lastRefresh = lastPRRefreshByRepo[path] ?? .distantPast
+        if Date().timeIntervalSince(lastRefresh) > 60 {
+            prs = await git.openPRs(repoPath: path)
+            cachedPRsByRepo[path] = prs
+            lastPRRefreshByRepo[path] = Date()
+        } else {
+            prs = cachedPRsByRepo[path] ?? []
+        }
+
+        // Guard against stale results if session changed during async work
+        guard activeSessionId == sessionId else { return }
+
+        activeGitStatus = GitStatusInfo(
+            diffStat: diff, commitsAhead: ahead,
+            openPRs: prs, changedFiles: diff?.changedFiles ?? []
+        )
+    }
+
+    /// Starts periodic git status polling.
+    func startGitStatusPolling() {
+        gitPollTask?.cancel()
+        gitPollTask = Task { [weak self] in
+            while !Task.isCancelled {
+                guard let self else { return }
+                await self.refreshGitStatus()
+                try? await Task.sleep(for: .seconds(10))
+            }
+        }
+    }
+
+    /// Stops git status polling.
+    func stopGitStatusPolling() {
+        gitPollTask?.cancel()
+        gitPollTask = nil
     }
 
     // MARK: - Update Checking
