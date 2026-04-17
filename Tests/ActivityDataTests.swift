@@ -229,6 +229,33 @@ struct ActivityParsingTests {
         #expect(bucket.sessionCount == 1) // still counts as a session
     }
 
+    // MARK: - Synthetic entries
+
+    @Test func syntheticEntriesAreSkipped() {
+        // Claude Code emits "<synthetic>" model entries for harness-injected
+        // assistant messages (API errors, "No response requested.", etc.).
+        // These are not real model calls and should not appear in the model
+        // breakdown, even when interleaved with real entries.
+        let jsonl = """
+        {"type":"assistant","timestamp":"2026-04-07T10:00:00.000Z","message":{"model":"<synthetic>","usage":{"input_tokens":0,"output_tokens":0}}}
+        {"type":"assistant","timestamp":"2026-04-07T11:00:00.000Z","message":{"model":"claude-opus-4-6","usage":{"input_tokens":100,"output_tokens":50}}}
+        """
+        let bucket = ActivityDataService.parseJsonlIntoBuckets(jsonl)["2026-04-07"]!
+        #expect(bucket.models["<synthetic>"] == nil)
+        #expect(bucket.models.count == 1)
+        #expect(bucket.models["claude-opus-4-6"] == 150)
+    }
+
+    @Test func syntheticOnlyFileProducesNoBuckets() {
+        // A session whose assistant entries are all synthetic (e.g., aborted
+        // session that only recorded API errors) should not count as a session.
+        let jsonl = """
+        {"type":"assistant","timestamp":"2026-04-07T10:00:00.000Z","message":{"model":"<synthetic>","usage":{"input_tokens":0,"output_tokens":0}}}
+        {"type":"assistant","timestamp":"2026-04-07T11:00:00.000Z","message":{"model":"<synthetic>","usage":{"input_tokens":0,"output_tokens":0}}}
+        """
+        #expect(ActivityDataService.parseJsonlIntoBuckets(jsonl).isEmpty)
+    }
+
     // MARK: - Session count attribution
 
     @Test func sessionCountOnEarliestDay() {

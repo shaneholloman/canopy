@@ -138,6 +138,11 @@ enum ActivityDataService {
                     continue
                 }
 
+                // Skip harness-injected entries (API errors, "No response requested.",
+                // etc.). They're not real model calls and would pollute the breakdown.
+                let model = message["model"] as? String ?? "unknown"
+                guard model != "<synthetic>" else { continue }
+
                 guard let date = formatters.iso8601.date(from: timestamp)
                         ?? formatters.iso8601NoFrac.date(from: timestamp) else {
                     continue
@@ -149,7 +154,6 @@ enum ActivityDataService {
                     + (usageDict["cache_creation_input_tokens"] as? Int ?? 0)
                     + (usageDict["cache_read_input_tokens"] as? Int ?? 0)
                 let outputTokens = usageDict["output_tokens"] as? Int ?? 0
-                let model = message["model"] as? String ?? "unknown"
                 let modelTokens = inputTokens + outputTokens
                 let totalTokens = inputTokens + outputTokens
 

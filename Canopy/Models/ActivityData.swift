@@ -18,7 +18,7 @@ struct HourlyBucket: Codable {
 
 /// Persistent cache for scanned JSONL data.
 struct ActivityCache: Codable {
-    static let currentVersion = 4
+    static let currentVersion = 5
 
     var version: Int = ActivityCache.currentVersion
     var lastScanTimestamp: Date = .distantPast
