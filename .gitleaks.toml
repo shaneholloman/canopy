@@ -1,0 +1,10 @@
+[allowlist]
+description = "Project-level allowances"
+paths = [
+  # Auto-generated build metadata — no secrets
+  '''Canopy/App/BuildInfo\.swift''',
+]
+# Silence ${{ secrets.* }} references in CI workflows (GitHub secret refs, not literal values)
+regexes = [
+  '''\$\{\{\s*secrets\.[A-Z_]+\s*\}\}''',
+]

@@ -27,9 +27,31 @@ xcuserdata/
 *.swp
 *~.nib
 
-# Secrets
+# Secrets — common credential files
 .env
-.env.local
+.env.*
+!.env.example
+*.pem
+*.key
+*.p8
+*.p12
+*.pfx
+*.keystore
+*.jks
+*_rsa
+*_dsa
+*_ecdsa
+*_ed25519
+id_rsa*
+id_dsa*
+id_ecdsa*
+id_ed25519*
+AuthKey_*.p8
+credentials.json
+service_account*.json
+secrets.yml
+secrets.yaml
+.secrets
 
 # Superpowers brainstorming + planning docs
 .superpowers/

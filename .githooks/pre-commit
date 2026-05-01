@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v gitleaks &>/dev/null; then
+  echo "⚠️  gitleaks not found — install with: brew install gitleaks"
+  exit 1
+fi
+
+gitleaks git --staged --redact --exit-code 1
