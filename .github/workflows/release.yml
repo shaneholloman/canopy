@@ -80,6 +80,7 @@ jobs:
             -scheme Canopy \
             -configuration Release \
             -archivePath "build/Canopy.xcarchive" \
+            -skipPackagePluginValidation \
             MARKETING_VERSION="$VERSION" \
             CODE_SIGN_IDENTITY="Developer ID Application" \
             CODE_SIGN_STYLE=Manual \

@@ -85,6 +85,7 @@ if command -v xcpretty >/dev/null 2>&1; then
         -configuration Release \
         -derivedDataPath "$DERIVED_DATA" \
         -archivePath "$ARCHIVE" \
+        -skipPackagePluginValidation \
         MARKETING_VERSION="${VERSION_STR}" \
         archive \
         | xcpretty
@@ -95,6 +96,7 @@ else
         -configuration Release \
         -derivedDataPath "$DERIVED_DATA" \
         -archivePath "$ARCHIVE" \
+        -skipPackagePluginValidation \
         MARKETING_VERSION="${VERSION_STR}" \
         archive
 fi

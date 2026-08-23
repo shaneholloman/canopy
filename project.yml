@@ -9,7 +9,11 @@ options:
 packages:
   SwiftTerm:
     url: https://github.com/migueldeicaza/SwiftTerm.git
-    from: "1.2.0"
+    # Exact, not `from:`. An open upper bound let xcodebuild resolve a
+    # different SwiftTerm on every machine -- 1.13.0 locally via Xcode, 1.15.0
+    # via SPM, 1.20.0 in CI -- so the shipped binary embedded a terminal
+    # emulator no test had ever run against. Bump this deliberately.
+    exactVersion: "1.20.0"
 
 targets:
   Canopy:
