@@ -57,6 +57,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   still showed the prominent "New Worktree Session" button that #60 demoted.
   The set drops from 6.4 MB to 1.6 MB, applying the `pngquant` rule that
   `docs/screenshots/README.md` documents and only `hero.png` had followed.
+- Documentation refreshed for the release (#88, #89). The Activity section
+  claimed the model breakdown splits across "Opus, Sonnet, and Haiku"; since
+  #77 the family is derived from the model ID, so it now reads Opus / Fable /
+  Sonnet / Haiku and matches what the view actually shows. Quick start also
+  leads with the zero-configuration path (`Cmd+T` on any repository) rather
+  than opening with project setup, and the requirements that were spread over
+  four sections are now one table.
 
 ### Internal
 - `swift test` no longer writes to the developer's real `~/.config/canopy`
@@ -70,6 +77,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   guard. The previous approach passed in isolation, failed under load, and was
   finally broken outright by an optimisation that made the awaited work faster.
   The clearing branch of that guard had no coverage at all.
+- `UpdateChecker`'s v-prefix assertions could not fail: `Int("v0") ?? 0`
+  collapses to 0, so every major-version-0 case passed vacuously. Comparing
+  v1.2.3 to 1.2.3 is the smallest case that actually breaks when prefix
+  stripping does.
 
 ## [1.2.0] - 2026-08-08
 
